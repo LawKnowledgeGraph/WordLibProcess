@@ -28,7 +28,7 @@ def save(term,page):
 def write_dict():
     for key in sorted(dict):
         for item in dict[key]:
-            print item,key
+            print item
 
 
 
@@ -46,7 +46,6 @@ def process_original_text(path):
         text=text.replace('M','14')
         text=text.replace('I','1')
         text=pattern.sub('',text)
-        print text
         assignNumberForLine(text.split())
 
 def assignNumberForLine(line):
@@ -60,7 +59,6 @@ def assignNumberForLine(line):
             if len(w)<1:
                 continue
             if w.isdigit()==False:
-                print w,count
                 count+=1
                 if unassigned!='':
                     '字 字 页码'
@@ -83,7 +81,6 @@ def assignNumberForLine(line):
     if unassigned!='':
 
         save(unassigned,former_page_number[count-1])
-    print former_page_number
 
 
 
