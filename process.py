@@ -9,52 +9,81 @@ import re
 import codecs
 import sys,getopt
 
-pattern =re.compile(u"[\u4e00-\u9fa5]+")
-pattern_digit=re.compile(r'[\d]+')
-pattern1=re.compile(r'\^|\•|\…|\_|\.|\:|\'|\”|\"|\，|\-|\■|\—|\：|[A-Z]|\~|[a-z]')
+pattern=re.compile(r'\’|\丨|\^|\•|\…|\_|\.|\:|\'|\”|\"|\，|\-|\■|\—|\：|[A-Z]|\~|[a-z]|\“')
+dict={}
+former_page_number=[1,1,1,1,1,1,1,1,1,1,1,1]
+
+def save(term,page):
+
+    number=int(page)
+    if number in dict:
+        if term in dict[number]:
+            return
+        dict[number].append(term)
+    else:
+        dict[number]=[]
+        dict[number].append(term)
+
+
+def write_dict():
+    for key in sorted(dict):
+        for item in dict[key]:
+            print item,key
+
 
 
 def process_original_text(path):
     file = Document(path)
     all_text=''
-    count=0
     for p in file.paragraphs:
         text=p.text.encode("UTF-8")
-        if '重大飞行' in text:
-            print 'find it'
-        print text
         if len(text)<=2:
             continue
         text=text.replace('〇','0')
         text=text.replace('i','1')
         text=text.replace('（','(')
         text=text.replace('）',')')
-        text=pattern1.sub('',text)
+        text=text.replace('M','14')
+        text=text.replace('I','1')
+        text=pattern.sub('',text)
+        print text
         assignNumberForLine(text.split())
 
 def assignNumberForLine(line):
+    count=0
     unassigned=''
     for item in line:
         result=re.split('[\(]*(\d+)[\)]*',item)
         
         for w in result:
+
             if len(w)<1:
                 continue
             if w.isdigit()==False:
+                print w,count
+                count+=1
                 if unassigned!='':
-                    unassigned=unassigned+w
+                    '字 字 页码'
+                    save(unassigned,former_page_number[count-2])
+                    unassigned=w
                 else:
                     unassigned=w
                     continue
             else:
+                if count==0:
+                    continue
+                former_page_number[count-1]=w
+
                 if unassigned=='':
                     continue
-                print ">"+unassigned,w
+                else:
+                    save(unassigned,w)
                 unassigned=''
 
     if unassigned!='':
-        print ">"+unassigned
-    print "------------------------------"
+
+        save(unassigned,former_page_number[count-1])
+    print former_page_number
 
 
 
@@ -83,7 +112,7 @@ if __name__ == '__main__':
             inputfile=arg
         elif opt in ('-o','--outputfile'):
             outputfile=arg
-    print inputfile,outputfile
     f_handler=open(outputfile,'w')
     sys.stdout=f_handler
     process_original_text(inputfile)
+    write_dict()
