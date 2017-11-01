@@ -9,7 +9,7 @@ import re
 import codecs
 import sys,getopt
 
-pattern=re.compile(r'\’|\丨|\^|\•|\…|\_|\.|\:|\'|\”|\"|\，|\-|\■|\—|\：|[A-Z]|\~|[a-z]|\“')
+pattern=re.compile(r'\！|\’|\丨|\^|\•|\…|\_|\.|\:|\'|\”|\"|\，|\-|\■|\—|\：|[A-Z]|\~|[a-z]|\“')
 dict={}
 former_page_number=[1,1,1,1,1,1,1,1,1,1,1,1]
 
